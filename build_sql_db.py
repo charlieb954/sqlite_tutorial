@@ -34,6 +34,8 @@ conn.commit()
 # create instance of faker
 fake = Faker()
 
+personal_list = []
+employee_list = []
 for i in range(0, 10000):
     # personal table
     name = fake.name()
@@ -41,18 +43,16 @@ for i in range(0, 10000):
     addr = fake.address()
     email = fake.email()
     country = fake.country()
-    
-    query = f'INSERT INTO personal VALUES ({i}, "{name}", "{dob}", "{addr}", "{email}", "{country}");'
-    
-    curs.execute(query)
+    personal_list.append((i, name, dob, addr, email, country))
     
     # employee table
     job = fake.job()
     state = fake.state()
-    
-    query = f'INSERT INTO employee VALUES ({i}, "{job}", "{state}");'
-    curs.execute(query)
-    
+    employee_list.append((i, job, state))
+
+curs.executemany('INSERT INTO personal VALUES (?,?,?,?,?,?)', personal_list)
+curs.executemany('INSERT INTO employee VALUES (?,?,?)', employee_list)
+
 conn.commit()
 
 conn.close()
