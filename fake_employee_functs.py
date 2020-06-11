@@ -3,6 +3,47 @@ import pandas as pd
 
 conn = sqlite3.connect('fake_employee.db')
 
+def add_employee(job, state):
+    ''' NOTE BOTH PERSONAL AND EMPLOYEE DETAILS MUST BE ADDED AT SAME TIME
+    add a single entry to employee table.
+    e_id integer PRIMARY KEY
+    job text
+    state text'''
+    try:
+        cur = conn.cursor()
+        max_id = cur.execute('SELECT MAX(e_id) FROM employee')
+        e_id = max_id.fetchone()[0] + 1
+        query = 'INSERT INTO employee VALUES (?,?,?)'
+        cur.execute(query, (e_id, job, state))
+        conn.commit()
+        return 'employee added'
+    
+    except:
+        return 'failed to add employee'
+
+def add_personal(name, dob=None, addr=None, email=None, country=None):
+    ''' NOTE BOTH PERSONAL AND EMPLOYEE DETAILS MUST BE ADDED AT SAME TIME
+    add a single entry to personal table.
+    p_id integer PRIMARY KEY
+    name text NOT NULL
+    dob text
+    address text
+    email text
+    country text
+    '''
+    try:
+        cur = conn.cursor()
+        max_id = cur.execute('SELECT MAX(e_id) FROM employee')
+        p_id = max_id.fetchone()[0] + 1
+        query = 'INSERT INTO personal VALUES (?,?,?,?,?,?)'
+        cur = conn.cursor()
+        cur.execute(query, (p_id, name, dob, addr, email, country))
+        conn.commit()
+        return 'person added'
+    
+    except :
+        return "failed to add person"
+
 def sql_query(query):
     return pd.read_sql_query(query, conn)
 
